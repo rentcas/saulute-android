@@ -37,6 +37,7 @@ fun SauluteApp(cameraAllowed: Boolean, requestCamera: () -> Unit) {
     val frames = remember { mutableStateListOf<PoseFrame>() }
     var seconds by remember { mutableIntStateOf(3) }
     var result by remember { mutableStateOf<Evaluation?>(null) }
+    val bodyVisible = latest?.points?.size?.let { it >= 10 } == true
 
     fun begin() {
         frames.clear(); seconds = 3; stage = Stage.COUNTDOWN
@@ -56,7 +57,13 @@ fun SauluteApp(cameraAllowed: Boolean, requestCamera: () -> Unit) {
         if (stage != Stage.RESULT) {
             CameraPoseView(Modifier.fillMaxSize()) { frame ->
                 latest = frame
-                if (stage == Stage.SETUP) setup = checkSetup(frame)
+                if (stage == Stage.SETUP) {
+                    setup = if (frame.points.size >= 10) {
+                        SetupStatus(true, "Kūnas matomas. Gali pradėti", 1f)
+                    } else {
+                        checkSetup(frame)
+                    }
+                }
                 if (stage == Stage.RECORDING && frame.points.size >= 10) frames.add(frame)
             }
             Box(Modifier.fillMaxSize().padding(18.dp)) {
@@ -84,10 +91,10 @@ fun SauluteApp(cameraAllowed: Boolean, requestCamera: () -> Unit) {
                 }
                 if (stage == Stage.SETUP) {
                     Button(
-                        onClick = { begin() }, enabled = setup.ready,
+                        onClick = { begin() }, enabled = bodyVisible,
                         modifier = Modifier.align(Alignment.BottomCenter).height(58.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Violet, disabledContainerColor = Color.DarkGray)
-                    ) { Text(if (setup.ready) "Pradėti bandymą" else "Pirmiausia pastatyk kamerą", fontSize = 17.sp) }
+                    ) { Text(if (bodyVisible) "Pradėti bandymą" else "Atsistok visa figūra į kadrą", fontSize = 17.sp) }
                 }
                 if (stage == Stage.RECORDING) {
                     Box(Modifier.align(Alignment.TopEnd).size(18.dp).background(Color.Red, CircleShape))
