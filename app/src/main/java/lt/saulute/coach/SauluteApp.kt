@@ -2,6 +2,8 @@ package lt.saulute.coach
 
 import android.os.CountDownTimer
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -57,8 +59,8 @@ fun SauluteApp(cameraAllowed: Boolean, requestCamera: () -> Unit) {
                 if (stage == Stage.SETUP) setup = checkSetup(frame)
                 if (stage == Stage.RECORDING && frame.points.size >= 10) frames.add(frame)
             }
-            Box(Modifier.fillMaxSize().padding(28.dp)) {
-                Column(Modifier.align(Alignment.TopStart).widthIn(max = 460.dp)) {
+            Box(Modifier.fillMaxSize().padding(18.dp)) {
+                Column(Modifier.align(Alignment.TopStart).fillMaxWidth()) {
                     Surface(color = Color.Black.copy(alpha = .68f), shape = RoundedCornerShape(22.dp)) {
                         Column(Modifier.padding(20.dp)) {
                             Text("SAULUTĖ", color = Mint, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
@@ -75,7 +77,7 @@ fun SauluteApp(cameraAllowed: Boolean, requestCamera: () -> Unit) {
                                 Spacer(Modifier.height(12.dp))
                                 LinearProgressIndicator(progress = { setup.progress }, color = if (setup.ready) Mint else Violet)
                                 Spacer(Modifier.height(10.dp))
-                                Text("Telefoną laikyk horizontaliai, maždaug klubų aukštyje. Judėk lygiagrečiai kamerai.", color = Color.White.copy(.78f))
+                                Text("Telefoną laikyk vertikaliai, maždaug klubų aukštyje. Atsitrauk tiek, kad kadre tilptų visas kūnas ir liktų vietos virš galvos.", color = Color.White.copy(.78f))
                             }
                         }
                     }
@@ -101,21 +103,21 @@ fun SauluteApp(cameraAllowed: Boolean, requestCamera: () -> Unit) {
 
 @Composable
 private fun ResultScreen(result: Evaluation, retry: () -> Unit) {
-    Row(Modifier.fillMaxSize().padding(34.dp), horizontalArrangement = Arrangement.spacedBy(34.dp)) {
-        Column(Modifier.weight(.85f), verticalArrangement = Arrangement.Center) {
+    Column(
+        Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 22.dp, vertical = 28.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             Text("REZULTATAS", color = Mint, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
-            Text("${result.total}", color = Color.White, fontSize = 92.sp, fontWeight = FontWeight.Black)
-            Text(result.headline, color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Bold)
+            Text("${result.total}", color = Color.White, fontSize = 78.sp, fontWeight = FontWeight.Black)
+            Text(result.headline, color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(20.dp))
             Surface(color = Violet.copy(alpha = .22f), shape = RoundedCornerShape(18.dp)) {
                 Text(result.advice, Modifier.padding(18.dp), color = Color.White, fontSize = 19.sp)
             }
-            Spacer(Modifier.height(20.dp))
-            Button(onClick = retry, colors = ButtonDefaults.buttonColors(containerColor = Violet)) { Text("Bandyti dar kartą") }
-            Spacer(Modifier.height(10.dp))
-            Text("Tai mokymosi pagalbininkas, ne trenerio ar saugos priežiūros pakaitalas.", color = Color.White.copy(.48f), fontSize = 12.sp)
         }
-        Column(Modifier.weight(1.15f).align(Alignment.CenterVertically), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Spacer(Modifier.height(20.dp))
+        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             result.metrics.forEach { metric ->
                 Surface(color = Color.White.copy(alpha = .08f), shape = RoundedCornerShape(16.dp)) {
                     Column(Modifier.fillMaxWidth().padding(16.dp)) {
@@ -131,5 +133,11 @@ private fun ResultScreen(result: Evaluation, retry: () -> Unit) {
                 }
             }
         }
+        Spacer(Modifier.height(22.dp))
+        Button(onClick = retry, colors = ButtonDefaults.buttonColors(containerColor = Violet), modifier = Modifier.height(54.dp)) {
+            Text("Bandyti dar kartą")
+        }
+        Spacer(Modifier.height(12.dp))
+        Text("Tai mokymosi pagalbininkas, ne trenerio ar saugos priežiūros pakaitalas.", color = Color.White.copy(.48f), fontSize = 12.sp)
     }
 }
