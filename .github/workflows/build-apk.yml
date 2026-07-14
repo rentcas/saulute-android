@@ -22,10 +22,10 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.9"
-      - name: Build unsigned release APK
-        run: gradle assembleRelease --stacktrace
+      - name: Build debug APK
+        run: gradle assembleDebug --stacktrace
       - uses: actions/upload-artifact@v4
         with:
-          name: saulute-unsigned-apk
-          path: app/build/outputs/apk/release/app-release-unsigned.apk
+          name: saulute-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
