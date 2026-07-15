@@ -12,8 +12,8 @@ android {
         applicationId = "lt.saulute.coach"
         minSdk = 26
         targetSdk = 35
-        versionCode = 2
-        versionName = "0.2.0"
+        versionCode = 3
+        versionName = "0.3.0"
     }
 
     buildFeatures { compose = true }
@@ -41,6 +41,7 @@ dependencies {
     implementation("androidx.camera:camera-camera2:$cameraX")
     implementation("androidx.camera:camera-lifecycle:$cameraX")
     implementation("androidx.camera:camera-view:$cameraX")
+    implementation("androidx.camera:camera-video:$cameraX")
     implementation("com.google.mlkit:pose-detection-accurate:18.0.0-beta5")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
