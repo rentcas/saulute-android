@@ -61,7 +61,14 @@ fun checkSetup(frame: PoseFrame?): SetupStatus {
 }
 
 data class Metric(val name: String, val score: Int, val detail: String)
-data class Evaluation(val total: Int, val headline: String, val advice: String, val metrics: List<Metric>)
+data class Evaluation(
+    val total: Int,
+    val headline: String,
+    val advice: String,
+    val metrics: List<Metric>,
+    val errorFrame: PoseFrame? = null,
+    val errorOffsetMs: Long = 0L
+)
 
 fun evaluateCartwheel(frames: List<PoseFrame>): Evaluation {
     if (frames.size < 8) return Evaluation(0, "Bandymo nepavyko įvertinti", "Pakartok ir lik visame kadre.", emptyList())
@@ -127,7 +134,14 @@ fun evaluateCartwheel(frames: List<PoseFrame>): Evaluation {
         total >= 50 -> "Jau neblogai – pataisyk vieną dalyką"
         else -> "Pabandyk dar kartą"
     }
-    return Evaluation(total, headline, advice, metrics)
+    return Evaluation(
+        total = total,
+        headline = headline,
+        advice = advice,
+        metrics = metrics,
+        errorFrame = inversion,
+        errorOffsetMs = (inversion.timeMs - frames.first().timeMs).coerceAtLeast(0L)
+    )
 }
 
 private fun distance(a: Pt, b: Pt) = hypot((a.x - b.x).toDouble(), (a.y - b.y).toDouble()).toFloat()
